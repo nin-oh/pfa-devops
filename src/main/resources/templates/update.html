@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Product</title>
+    <!-- Ajout de Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-image: url('/images/img_3.png'); /* Remplacez 'background.jpg' par le chemin de votre image de fond */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card {
+            background-color: rgba(255, 255, 255, 0.8); /* Couleur de fond de la carte avec transparence */
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Ombre douce */
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="text-center mb-4">Edit Product</h2>
+                    <form th:action="@{/edit}" method="post">
+                        <!-- Hidden input to send product ID -->
+                        <input type="hidden" th:field="${product.id}" name="id" />
+
+                        <div class="form-group">
+                            <label for="name">Name:</label>
+                            <input type="text" class="form-control" id="name" th:field="${product.description}" name="description">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="price">Price:</label>
+                            <input type="number" class="form-control" id="price" th:field="${product.price}" name="price">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="category">Category:</label>
+                            <select class="form-select w-50" id="category" name="category">
+                                <option value="">Select a category</option>
+                                <!-- Iterate over your list of categories to generate options -->
+                                <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.title}"></option>
+                                <span class="text-danger" th:errors="${product.category}"></span>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="quantity">Quantity:</label>
+                            <input type="number" class="form-control" id="quantity" th:field="${product.quantity}" name="quantity">
+                        </div>
+
+                        <!-- Ajoutez d'autres champs ici si nécessaire -->
+
+                        <button type="submit" class="btn btn-primary btn-block">Update</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Ajout du script Bootstrap -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

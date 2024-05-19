@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/pagination.css}">
+    <title>Liste des produits</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+<body class="bg-secondary-subtle text-secondary-emphasis" >
+<div th:replace="snippets/header"></div>
+<h2>Liste des produits <span th:text="${userLogin}"></span></h2>
+<div class="container table-responsive-md">
+<table class="table table-bordered table-hover table-striped table-dark" >
+    <thead>
+    <tr>
+        <th>Référence</th>
+        <th>Désignation</th>
+        <th>Prix</th>
+        <th>Image</th>
+        <th>Category</th>
+        <th>Status</th>
+        <th>Update</th>
+        <th>Delete</th>
+
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Boucle sur la liste des produits -->
+    <tr th:each="product : ${listProduits}">
+
+        <td th:text="${product.id}"></td>
+        <td th:text="${product.description}"></td>
+        <td th:text="${product.price}"></td>
+        <td>
+        <!-- Affichage de l'image -->
+<!--        <img th:src="@{${product.image}}" alt="Product Image" style="max-width: 100px; max-height: 100px;"/>-->
+
+                <img th:src="'data:image/jpeg;base64,' + ${product.image}" alt="Product Image" style="max-width: 100px; max-height: 100px;" >
+
+    </td>
+        <td th:text="${product.category.title}"></td>s
+        <td th:text="${product.status}" th:class="${product.status == 'available' ? 'text-success' : 'text-danger'}"></td>
+
+        <td> <a class="link-light link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" th:href="@{/edit/{id}(id=${product.getId()})}">Modifier</a></td>
+        <td><a class="link-light link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" th:href="@{/delete/{id}(id=${product.getId()})}">Supprimer</a></td>>
+
+
+    </tr>
+    </tbody>
+</table>
+
+<div th:if="${listProduits.totalPages > 1}">
+    <nav  class="pagination-outer" aria-label="Page navigation" >
+    <ul class="pagination justify-content-center">
+        <li class="page-item" th:class="${listProduits.first ? 'disabled' : ''}">
+            <a th:href="@{/getALlProductsList(page=0)}" class="page-link" aria-label="Previous">
+                <span aria-hidden="true">«</span>
+            </a>
+        </li>
+        <li class="page-item" th:each="pageNumber : ${#numbers.sequence(0, listProduits.totalPages - 1)}" th:class="${listProduits.number == pageNumber ? 'active' : ''}">
+            <a class="page-link" th:href="@{/getALlProductsList(page=${pageNumber})}" th:text="${pageNumber + 1}"></a>
+        </li>
+        <li class="page-item" th:class="${listProduits.last ? 'disabled' : ''}">
+            <a th:href="@{/getALlProductsList(page=${listProduits.totalPages - 1})}" class="page-link" aria-label="Next">
+                <span aria-hidden="true">»</span>
+            </a>
+        </li>
+
+    </ul>
+    </nav>
+</div>
+</div>
+<div th:replace="snippets/footer"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>

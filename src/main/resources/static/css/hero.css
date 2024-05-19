@@ -1,0 +1,9 @@
+.hero {
+    background: url('static/images/img_1.png') no-repeat center center;
+    background-size: cover;
+    color: white;
+    padding: 150px 0;
+}
+.hero h1, .hero p {
+    color: white;
+}

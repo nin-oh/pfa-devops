@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des Produits</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .product-card {
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .product-card img {
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+        }
+
+        .search-bar {
+            margin-bottom: 20px;
+        }
+
+        .no-products {
+            text-align: center;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row search-bar">
+        <div class="col-md-12">
+            <form th:action="@{/searchProducts}" method="get" class="form-inline">
+                <div class="form-group mr-2">
+                    <input type="text" name="description" class="form-control" placeholder="Description">
+                </div>
+                <div class="form-group mr-2">
+                    <select name="category" class="form-control">
+                        <option value="">Select Category</option>
+                        <option th:each="category : ${categories}" th:value="${category.title}" th:text="${category.title}">Category</option>
+                    </select>
+                </div>
+                <div class="form-group mr-2">
+                    <input type="number" name="minPrice" class="form-control" placeholder="Min Price">
+                </div>
+                <div class="form-group mr-2">
+                    <input type="number" name="maxPrice" class="form-control" placeholder="Max Price">
+                </div>
+                <div class="form-group mr-2">
+                    <input type="text" name="vendor" class="form-control" placeholder="Vendor">
+                </div>
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div th:if="${#lists.isEmpty(listProducts)}" class="no-products">
+                <h2>PAS DE PRODUITS</h2>
+            </div>
+            <div class="row" th:if="${!#lists.isEmpty(listProducts)}">
+                <div th:each="product : ${listProducts}" class="col-md-3">
+                    <div class="product-card">
+                        <img th:src="'data:image/jpeg;base64,' + ${product.image}" alt="Product Image" class="img-fluid"/>
+                        <h5 th:text="${product.description}" class="mt-2">Product Title</h5>
+                        <p th:text="${product.price}">Product Price</p>
+                        <p th:text="${product.category.title}">Category</p>
+                        <p th:text="${product.vendor.title}">Vendor Name</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Uncomment the pagination section if pagination is implemented in your controller -->
+    <!--
+    <div class="row" th:if="${!#lists.isEmpty(listProductsn)}">
+        <div class="col-md-12">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    <li th:classappend="${listProductsn.hasPrevious()} ? 'page-item' : 'page-item disabled'">
+                        <a th:href="@{/getALlProductsList(page=${listProductsn.number - 1})}" class="page-link">Previous</a>
+                    </li>
+                    <li th:each="i : ${#numbers.sequence(0, listProductsn.totalPages - 1)}" th:classappend="${listProductsn.number == i} ? 'page-item active' : 'page-item'">
+                        <a th:href="@{/getALlProductsList(page=${i})}" class="page-link" th:text="${i + 1}">1</a>
+                    </li>
+                    <li th:classappend="${listProductsn.hasNext()} ? 'page-item' : 'page-item disabled'">
+                        <a th:href="@{/getALlProductsList(page=${listProductsn.number + 1})}" class="page-link">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    -->
+</div>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

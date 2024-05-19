@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Navbar Example</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg bg-dark border-bottom border-body" data-bs-theme="dark" th:fragment="header">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/home">
+            <img th:src="@{/images/webicon.png}" alt="mysite" width="40" height="40">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item" id="homeLink">
+                    <a class="nav-link active" href="/getALlProductsList">Home</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Ajouter
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="/ajouterproduit">Produit</a></li>
+                        <li><a class="dropdown-item" href="/ajoutercateg">Category</a></li>
+                        <li><a class="dropdown-item" href="/ajouterven">Vendor</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        List
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown2">
+                        <li><a class="dropdown-item" href="/getALlProductsList">Produit</a></li>
+                        <li><a class="dropdown-item" href="/categories">Category</a></li>
+                        <li><a class="dropdown-item" href="/vendors">Vendor</a></li>
+                        <li><a class="dropdown-item" href="/users">Users</a></li>
+                    </ul>
+                </li>
+            </ul>
+
+            <!-- Formulaire de recherche -->
+            <form class="d-flex" action="/getALlProductsList" method="get" role="search">
+                <input class="form-control me-2" type="search" name="keyword" placeholder="Rechercher...">
+                <button class="btn btn-outline-success" type="submit">Rechercher</button>
+            </form>
+
+            <form class="d-flex ms-2" th:action="@{/logout}" method="post">
+                <button class="btn btn-primary" type="submit">Logout</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<!-- Bootstrap JS, Popper.js, and jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+</body>
+</html>

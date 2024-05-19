@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des Produits</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .product-card {
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .product-card img {
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+        }
+
+        .search-bar {
+            margin-bottom: 20px;
+        }
+
+        .no-products {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .sidebar {
+            padding: 20px;
+            border-right: 1px solid #ccc;
+        }
+
+        .sidebar h5 {
+            margin-top: 20px;
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="margin-bottom: 20px;">
+    <a class="navbar-brand" href="/home">
+        <img th:src="@{/images/webicon.png}" alt="mysite" width="40" height="40">
+    </a>
+    <a class="navbar-brand" href="#">MonSite</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <!-- If user is not logged in -->
+            <li class="nav-item" th:if="${userLogin == null}">
+                <a class="nav-link" href="/login">Login</a>
+            </li>
+            <li class="nav-item" th:if="${userLogin == null}">
+                <a class="nav-link" href="/register">Registration</a>
+            </li>
+            <!-- If user is logged in -->
+            <li class="nav-item" th:if="${userLogin != null}">
+                <a class="nav-link" th:href="@{user/Update/{id}(id=${userLogin})}">Hello, <span th:text="${userLogin}"></span></a>
+            </li>
+            <li class="nav-item" th:if="${userLogin != null}">
+                <form th:action="@{/logout}" method="post" class="form-inline">
+                    <button class="btn btn-outline-danger my-2 my-sm-0" type="submit">Logout</button>
+                </form>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div class="container">
+    <div class="row search-bar">
+        <div class="col-md-12">
+            <form th:action="@{/searchProducts}" method="get" class="form-inline">
+                <div class="form-group mr-2">
+                    <input type="text" name="description" class="form-control" placeholder="Description">
+                </div>
+                <div class="form-group mr-2">
+                    <select name="category" class="form-control">
+                        <option value="">Select Category</option>
+                        <option th:each="category : ${categories}" th:value="${category.title}" th:text="${category.title}">Category</option>
+                    </select>
+                </div>
+                <div class="form-group mr-2">
+                    <input type="number" name="minPrice" class="form-control" placeholder="Min Price">
+                </div>
+                <div class="form-group mr-2">
+                    <input type="number" name="maxPrice" class="form-control" placeholder="Max Price">
+                </div>
+                <div class="form-group mr-2">
+                    <input type="text" name="vendor" class="form-control" placeholder="Vendor">
+                </div>
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3 sidebar">
+            <h5>Catégories</h5>
+            <ul>
+                <li th:each="category : ${categories}">
+                    <a th:href="@{/searchProducts(category=${category.title})}" th:text="${category.title} + ' (' + ${category.productCount} + ')'">Category</a>
+                </li>
+            </ul>
+            <h5>Vendeurs</h5>
+            <ul>
+                <li th:each="vendor : ${vendors}">
+                    <a th:href="@{/searchProducts(vendor=${vendor.title})}" th:text="${vendor.title} + ' (' + ${vendor.productCount} + ')'">Vendor</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-9">
+            <div th:if="${#lists.isEmpty(listProductsn)}" class="no-products">
+                <h2>PAS DE PRODUITS</h2>
+            </div>
+            <div class="row">
+                <div th:each="product : ${listProductsn}" class="col-md-4">
+                    <div class="product-card">
+                        <img th:src="'data:image/jpeg;base64,' + ${product.image}" alt="Product Image" class="img-fluid"/>
+                        <h5 th:text="${product.description}" class="mt-2">Product Title</h5>
+                        <p th:text="${product.price}">Product Price</p>
+                        <p th:text="${product.category.title}">Category</p>
+                        <p th:text="${product.vendor.title}">Vendor Name</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row" th:if="${!#lists.isEmpty(listProductsn)}">
+                <div class="col-md-12">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center">
+                            <li th:classappend="${listProductsn.hasPrevious()} ? 'page-item' : 'page-item disabled'">
+                                <a th:href="@{/searchProducts(page=${listProductsn.number - 1})}" class="page-link">Previous</a>
+                            </li>
+                            <li th:each="i : ${#numbers.sequence(0, listProductsn.totalPages - 1)}" th:class="${listProductsn.number == i} ? 'page-item active' : 'page-item'">
+                                <a th:href="@{/searchProducts(page=${i})}" class="page-link" th:text="${i + 1}"></a>
+                            </li>
+                            <li th:classappend="${listProductsn.hasNext()} ? 'page-item' : 'page-item disabled'">
+                                <a th:href="@{/searchProducts(page=${listProductsn.number + 1})}" class="page-link">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>
