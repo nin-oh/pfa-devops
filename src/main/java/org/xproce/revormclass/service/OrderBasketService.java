@@ -19,11 +19,5 @@ public class OrderBasketService {
         return orderBasketRepository.findAll();
     }
 
-    public void addProductToOrderBasket(Product product, UserModel user, int quantity) {
-        OrderBasket orderBasket = new OrderBasket();
-        orderBasket.setProduct(product);
-        orderBasket.setUser(user);
-        orderBasket.setQuantity(quantity);
-        orderBasketRepository.save(orderBasket);
-    }
+    public OrderBasket save(OrderBasket product){return orderBasketRepository.save(product);}
 }

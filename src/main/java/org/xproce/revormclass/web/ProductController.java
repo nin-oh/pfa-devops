@@ -16,10 +16,13 @@ import org.springframework.validation.*;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.xproce.revormclass.dao.entities.Category;
+import org.xproce.revormclass.dao.entities.OrderBasket;
 import org.xproce.revormclass.dao.entities.Product;
 import org.xproce.revormclass.dao.entities.Vendor;
 import org.xproce.revormclass.service.Categorymanager;
+import org.xproce.revormclass.service.OrderBasketService;
 import org.xproce.revormclass.service.ProductManager;
 import jakarta.validation.Valid;
 import jakarta.validation.*;
@@ -46,6 +49,8 @@ public class ProductController {
     private Categorymanager categorymanager;
     @Autowired
     private VendorManager vendorManager;
+    @Autowired
+    private OrderBasketService orderBasketService;
 
 //    @GetMapping("/getProductsList")
 //    public String getALlProducts(Model model) {
@@ -384,4 +389,125 @@ public String ajouterVENonce(Model model,
 
         return "home_page_visit";
     }
+    @PostMapping("/addToCart")
+    public String addToCart(@RequestParam int productId, @AuthenticationPrincipal UserDetails userDetails, RedirectAttributes redirectAttributes) {
+        String username = userDetails.getUsername();
+        UserModel user = userService.findByUsername(username);
+        Product product = productManager.getProduct(productId);
+
+        if (user != null && product != null) {
+            OrderBasket cart = user.getOrderBasket();
+            if (cart == null) {
+                cart = new OrderBasket();
+                cart.setUser(user);
+                user.setOrderBasket(cart);  // Ensure the user's basket is updated
+            }
+
+            // Update the product's quantity and quantityordered
+            if (product.getQuantity() > 0) {
+                product.setQuantity(product.getQuantity() - 1);
+                product.setQuantityordered(product.getQuantityordered() + 1);
+
+                // Set the order basket reference on the product
+                product.setOrderBasket(cart);
+                cart.getProducts().add(product);
+
+                // Save the updated entities
+                productManager.addProduct(product);
+                orderBasketService.save(cart);
+
+                System.out.println(cart);
+                cart.getProducts().forEach(p -> System.out.println(p.getDescription() + ": " + p.getPrice()));
+                System.out.println("Product added to cart successfully!");
+                redirectAttributes.addFlashAttribute("message", "Product added to cart successfully!");
+                redirectAttributes.addFlashAttribute("alertClass", "alert-success");
+            } else {
+                System.out.println("Product is out of stock.");
+                redirectAttributes.addFlashAttribute("message", "Product is out of stock.");
+                redirectAttributes.addFlashAttribute("alertClass", "alert-warning");
+            }
+        } else {
+            System.out.println("Failed to add product to cart.");
+            redirectAttributes.addFlashAttribute("message", "Failed to add product to cart.");
+            redirectAttributes.addFlashAttribute("alertClass", "alert-warning");
+        }
+
+        return "redirect:/searchProducts";
+    }
+
+
+//    @PostMapping("/addToCart")
+//    public String addToCart(@RequestParam int productId, @AuthenticationPrincipal UserDetails userDetails, RedirectAttributes redirectAttributes) {
+//        String username = userDetails.getUsername();
+//        UserModel user = userService.findByUsername(username);
+//        Product product = productManager.getProduct(productId);
+//
+//
+//        if (user != null && product != null) {
+//            OrderBasket cart = user.getOrderBasket();
+//            if (cart == null) {
+//                cart = new OrderBasket();
+//                cart.setUser(user);
+//            }
+//            cart.getProducts().add(product);
+//
+//            orderBasketService.save(cart);
+//System.out.println(cart);
+//            System.out.println( "Product added to cart successfully!");
+//        } else {
+//            System.out.println( "Failed to add product to cart.");
+//        }
+//
+//        return "redirect:/searchProducts";
+//    }
+
+    @GetMapping("/basket")
+    public String viewBasket(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        String username = userDetails.getUsername();
+        UserModel user = userService.findByUsername(username);
+        model.addAttribute("userLogin", username);
+        if (user != null) {
+            OrderBasket basket = user.getOrderBasket();
+            if (basket != null && !basket.getProducts().isEmpty()) {
+                model.addAttribute("basket", basket);
+                model.addAttribute("products", basket.getProducts());
+                return "basket";
+            }
+        }
+
+        model.addAttribute("message", "Your basket is empty.");
+        return "basket";
+    }
+
+    @PostMapping("/updateQuantity")
+    public String updateQuantity(@RequestParam("productId") int productId,
+                                 @RequestParam("quantity") int quantity,
+                                 RedirectAttributes redirectAttributes) {
+        Product product = productManager.getProduct(productId);
+        if (product != null) {
+            if (quantity <= product.getQuantity()) {
+                if (quantity<=0){
+                    product.setQuantity(product.getQuantityordered());
+                    product.setQuantityordered(0);
+                    product.setOrderBasket(null);
+                    productManager.updateProduct(product);
+                    redirectAttributes.addFlashAttribute("updateStatus", "removed");
+                }
+                else
+                {
+                product.setQuantityordered(quantity);
+                    product.setQuantity(product.getQuantity()-quantity);
+                productManager.addProduct(product);
+                redirectAttributes.addFlashAttribute("updateStatus", "success");}
+            } else {
+                redirectAttributes.addFlashAttribute("updateStatus", "failed");
+            }
+        } else {
+            redirectAttributes.addFlashAttribute("updateStatus", "failed");
+        }
+        // Redirect back to the basket page
+        return "redirect:/basket";
+    }
+
+
 }

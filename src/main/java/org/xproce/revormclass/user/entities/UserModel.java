@@ -42,9 +42,9 @@ public class UserModel  {
 
     String lastName;
 
-    @OneToMany(mappedBy = "user", cascade = {CascadeType.ALL, CascadeType.PERSIST})
+    @OneToOne(mappedBy = "user", cascade = {CascadeType.ALL, CascadeType.PERSIST})
     @ToString.Exclude
-    private List<OrderBasket> orderBaskets;
+    private OrderBasket orderBasket;
 
     @Column(unique = true)
     String username;

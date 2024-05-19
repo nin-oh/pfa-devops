@@ -51,7 +51,9 @@ public class Product {
     private int quantity;
 
 
-
+    @NotNull
+    @Min(0)
+    private int quantityordered=0;
 
     // Update status based on quantity
     @PrePersist
@@ -64,9 +66,10 @@ public class Product {
         }
     }
 
-    @OneToMany(mappedBy = "product")
-    @ToString.Exclude
-    private List<OrderBasket> orderBaskets;
+
+    @ManyToOne
+    @JoinColumn(name = "order_basket_id", referencedColumnName = "id")
+    private OrderBasket orderBasket;
 
 
 //    @ManyToOne

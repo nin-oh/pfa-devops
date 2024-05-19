@@ -1,11 +1,10 @@
 package org.xproce.revormclass.dao.entities;
 
-import jakarta.persistence.Entity;
 import jakarta.persistence.*;
-import jakarta.persistence.Table;
 import lombok.*;
 import org.xproce.revormclass.user.entities.UserModel;
-
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,22 +16,23 @@ import org.xproce.revormclass.user.entities.UserModel;
 public class OrderBasket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private int id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "product_id")
+    @OneToMany(mappedBy = "orderBasket", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
-    private Product product;
+    private List<Product> products = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id")
     @ToString.Exclude
     private UserModel user;
 
-    @Column(name = "quantity")
     private int quantity;
-
-    //We use temporary field that is not in db for business logic(we don't need to save it in db)
-
+    public double totalPrice() {
+        double totalPrice = 0.0;
+        for (Product product : products) {
+            totalPrice += product.getPrice() * product.getQuantityordered();
+        }
+        return totalPrice;
+    }
 }
