@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -23,7 +24,7 @@ public class Category {
 
     @OneToMany(mappedBy = "category")
     @ToString.Exclude
-    private List<Product> products;
+    private List<Product> products = new ArrayList<>();
 
     @Transient
     private long productCount;

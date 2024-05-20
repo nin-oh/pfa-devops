@@ -69,15 +69,12 @@
                         <input type="hidden" name="productId" th:value="${product.id}">
                         <input type="number" name="quantity" th:value="${product.quantityordered}">
                         <button type="submit">Update</button>
-
                     </form>
-
                 </td>
                 <td th:text="${product.quantityordered * product.price}"></td>
             </tr>
             </tbody>
             <tfoot>
-
             <tr>
                 <td colspan="3">Total:</td>
                 <td>
@@ -87,17 +84,23 @@
             </tr>
             </tfoot>
         </table>
+
+        <!-- Status Messages -->
         <div th:if="${updateStatus == 'success'}" class="alert alert-success">
             Quantity updated successfully.
         </div>
         <div th:if="${updateStatus == 'failed'}" class="alert alert-danger">
             Quantity update failed. Please make sure the quantity doesn't exceed the available quantity.
         </div>
-        <div th:if="${updateStatus == 'removed'}" class="alert alert-danger">
-            Product removed from the cart .
+        <div th:if="${updateStatus == 'removed'}" class="alert alert-warning">
+            Product removed from the cart.
+        </div>
+        <div th:if="${updateStatus == 'not_found'}" class="alert alert-danger">
+            Product not found.
         </div>
     </div>
 </div>
+
 <div th:replace="snippets/footer"></div>
 </body>
 </html>

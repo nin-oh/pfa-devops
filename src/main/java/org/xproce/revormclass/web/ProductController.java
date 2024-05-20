@@ -82,16 +82,18 @@ public class ProductController {
 
    }
     @GetMapping("/searchProducts")
-    public String showProducts(@RequestParam(name = "description", required = false) String description,
-                               @RequestParam(name = "minPrice", required = false) Double minPrice,
-                               @RequestParam(name = "maxPrice", required = false) Double maxPrice,
-                               @RequestParam(name = "category", required = false) String category,
-                               @RequestParam(name = "vendor", required = false) String vendor,@RequestParam(defaultValue = "0") int page,
-                               @AuthenticationPrincipal UserDetails userDetails ,Model model) {
+    public String showProducts(
+            @RequestParam(name = "description", required = false) String description,
+            @RequestParam(name = "minPrice", required = false) Double minPrice,
+            @RequestParam(name = "maxPrice", required = false) Double maxPrice,
+            @RequestParam(name = "category", required = false) String category,
+            @RequestParam(name = "vendor", required = false) String vendor,
+            @RequestParam(defaultValue = "0") int page,
+            @AuthenticationPrincipal UserDetails userDetails, Model model) {
 
-            String username = userDetails.getUsername();
+        String username = userDetails.getUsername();
+        model.addAttribute("userLogin", username);
 
-            model.addAttribute("userLogin", username);
         Pageable pageable = PageRequest.of(page, 3);
         Page<Product> products;
 
@@ -104,19 +106,26 @@ public class ProductController {
         if (description == null && minPrice == null && maxPrice == null && category == null && vendor == null) {
             products = productManager.getAllProducts(pageable);
         } else {
-            products = productManager.searchProductsad(description, minPrice, maxPrice, category, vendor,pageable);
+            products = productManager.searchProductsad(description, minPrice, maxPrice, category, vendor, pageable);
+        }
+
+        // Check if no products are found
+        if (products.isEmpty()) {
+            model.addAttribute("noProductsMessage", "No products with such description");
         }
 
         List<Category> categories = categorymanager.getAllCategories();
         List<Vendor> vendors = vendorManager.getAllVendors();
         categories.forEach(cat -> cat.setProductCount(productManager.countByCategory(cat.getTitle())));
         vendors.forEach(vend -> vend.setProductCount(productManager.countByVendor(vend.getTitle())));
+
         model.addAttribute("categories", categories);
         model.addAttribute("vendors", vendors);
         model.addAttribute("listProductsn", products);
 
         return "listPFC";
     }
+
 
 //    @GetMapping("/getALlProductsListCL")
 //    public String getAllProductsCL(Model model, @RequestParam(value = "keyword", required = false) String keyword,
@@ -485,29 +494,34 @@ public String ajouterVENonce(Model model,
                                  RedirectAttributes redirectAttributes) {
         Product product = productManager.getProduct(productId);
         if (product != null) {
-            if (quantity <= product.getQuantity()) {
-                if (quantity<=0){
-                    product.setQuantity(product.getQuantityordered());
+            if(quantity <= product.getQuantityordered()+product.getQuantity())
+            {
+                if (quantity <= 0) {
+                    product.setQuantity(product.getQuantity() + product.getQuantityordered());
                     product.setQuantityordered(0);
                     product.setOrderBasket(null);
                     productManager.updateProduct(product);
                     redirectAttributes.addFlashAttribute("updateStatus", "removed");
                 }
-                else
-                {
-                product.setQuantityordered(quantity);
-                    product.setQuantity(product.getQuantity()-quantity);
-                productManager.addProduct(product);
-                redirectAttributes.addFlashAttribute("updateStatus", "success");}
+                if(quantity>0) {
+                    product.setQuantity(product.getQuantityordered()+product.getQuantity() - quantity);
+                    product.setQuantityordered(quantity);
+
+                    productManager.updateProduct(product);
+                    redirectAttributes.addFlashAttribute("updateStatus", "success");
+                }
+
+
             } else {
                 redirectAttributes.addFlashAttribute("updateStatus", "failed");
             }
         } else {
-            redirectAttributes.addFlashAttribute("updateStatus", "failed");
+            redirectAttributes.addFlashAttribute("updateStatus", "not_found");
         }
         // Redirect back to the basket page
         return "redirect:/basket";
     }
+
 
 
 }

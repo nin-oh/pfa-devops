@@ -11,7 +11,9 @@
             padding: 15px;
             margin: 10px;
             text-align: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
         }
 
         .product-card img {
@@ -19,6 +21,24 @@
             width: 100px;
             height: 100px;
             object-fit: cover;
+        }
+
+        .add-to-cart-overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .product-card:hover .add-to-cart-overlay {
+            display: flex;
         }
 
         .search-bar {
@@ -73,7 +93,6 @@
             </li>
             <li class="nav-item" th:if="${userLogin != null}">
                 <a class="nav-link" href="/basket">
-                    <!-- <img src="/images/cart-icon.png" alt="Cart" width="24" height="24"> -->
                     <svg xmlns="http://www.w3.org/2000/svg" width="92" height="92" viewBox="0 0 92 92" id="cart" style="height: 32px;">
                         <path d="M91.8 27.3 81.1 61c-.8 2.4-2.9 4-5.4 4H34.4c-2.4 0-4.7-1.5-5.5-3.7L13.1 19H4c-2.2 0-4-1.8-4-4s1.8-4 4-4h11.9c1.7 0 3.2 1.1 3.8 2.7L36 57h38l8.5-27H35.4c-2.2 0-4-1.8-4-4s1.8-4 4-4H88c1.3 0 2.5.7 3.2 1.7.8 1 1 2.4.6 3.6zm-55.4 43c-1.7 0-3.4.7-4.6 1.9-1.2 1.2-1.9 2.9-1.9 4.6 0 1.7.7 3.4 1.9 4.6 1.2 1.2 2.9 1.9 4.6 1.9s3.4-.7 4.6-1.9c1.2-1.2 1.9-2.9 1.9-4.6 0-1.7-.7-3.4-1.9-4.6-1.2-1.2-2.9-1.9-4.6-1.9zm35.9 0c-1.7 0-3.4.7-4.6 1.9s-1.9 2.9-1.9 4.6c0 1.7.7 3.4 1.9 4.6 1.2 1.2 2.9 1.9 4.6 1.9 1.7 0 3.4-.7 4.6-1.9 1.2-1.2 1.9-2.9 1.9-4.6 0-1.7-.7-3.4-1.9-4.6s-2.9-1.9-4.6-1.9z" alt="Cart" width="24" height="24"></path>
                     </svg>
@@ -141,37 +160,55 @@
                         <p th:text="${product.price}">Product Price</p>
                         <p th:text="${product.category.title}">Category</p>
                         <p th:text="${product.vendor.title}">Vendor Name</p>
-                        <form th:action="@{/addToCart}" method="post" class="mt-2">
-                            <input type="hidden" name="productId" th:value="${product.getId()}">
-                            <button type="submit" class="btn btn-success">Add to Cart</button>
-                        </form>
-
-
-
+                        <div class="add-to-cart-overlay">
+                            <form th:action="@{/addToCart}" method="post" class="mt-2">
+                                <input type="hidden" name="productId" th:value="${product.getId()}">
+                                <button type="submit" class="btn btn-success">Add to Cart</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
-
             </div>
             <div th:if="${message != null}" class="alert" th:classappend="${alertClass}" role="alert">
                 <span th:text="${message}"></span>
             </div>
-            <div class="row" th:if="${!#lists.isEmpty(listProductsn)}">
-                <div class="col-md-12">
-                    <nav aria-label="Page navigation">
-                        <ul class="pagination justify-content-center">
-                            <li th:classappend="${listProductsn.hasPrevious()} ? 'page-item' : 'page-item disabled'">
-                                <a th:href="@{/searchProducts(page=${listProductsn.number - 1})}" class="page-link">Previous</a>
-                            </li>
-                            <li th:each="i : ${#numbers.sequence(0, listProductsn.totalPages - 1)}" th:class="${listProductsn.number == i} ? 'page-item active' : 'page-item'">
-                                <a th:href="@{/searchProducts(page=${i})}" class="page-link" th:text="${i + 1}"></a>
-                            </li>
-                            <li th:classappend="${listProductsn.hasNext()} ? 'page-item' : 'page-item disabled'">
-                                <a th:href="@{/searchProducts(page=${listProductsn.number + 1})}" class="page-link">Next</a>
-                            </li>
-                        </ul>
-                    </nav>
+
+            <div class="container">
+                <!-- Add your other elements here -->
+
+                <!-- No products message -->
+                <div th:if="${noProductsMessage}" class="alert alert-warning text-center" role="alert" style="margin-top: 20px;">
+                    <span th:text="${noProductsMessage}"></span>
+                </div>
+
+                <!-- Products List and Pagination -->
+                <div class="row" th:if="${listProductsn != null && !#lists.isEmpty(listProductsn.content)}">
+                    <div class="col-md-12">
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination justify-content-center">
+                                <!-- Previous Page Link -->
+                                <li th:classappend="${listProductsn.hasPrevious()} ? 'page-item' : 'page-item disabled'">
+                                    <a th:href="@{/searchProducts(page=${listProductsn.number - 1})}" class="page-link">Previous</a>
+                                </li>
+
+                                <!-- Page Number Links -->
+                                <li th:each="i : ${#numbers.sequence(1, listProductsn.totalPages)}"
+                                    th:class="${listProductsn.number + 1 == i} ? 'page-item active' : 'page-item'">
+                                    <a th:href="@{/searchProducts(page=${i - 1})}" class="page-link" th:text="${i}"></a>
+                                </li>
+
+                                <!-- Next Page Link -->
+                                <li th:classappend="${listProductsn.hasNext()} ? 'page-item' : 'page-item disabled'">
+                                    <a th:href="@{/searchProducts(page=${listProductsn.number + 1})}" class="page-link">Next</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
             </div>
+
+
+
         </div>
     </div>
 </div>

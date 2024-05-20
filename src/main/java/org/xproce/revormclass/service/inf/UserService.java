@@ -33,15 +33,15 @@ public class UserService {
         userRepository.save(user);
     }
 
-    @PostConstruct
-    public void postconstrust(){
-        UserModel user = new UserModel();
-        user.setRole("admin");
-        user.setUsername("admin");
-        user.setPassword(passwordEncoder.encode("cc"));
-        user.setEmail("cc@cc.com");
-        userRepository.save(user);
-    }
+//    @PostConstruct
+//    public void postconstrust(){
+//        UserModel user = new UserModel();
+//        user.setRole("admin");
+//        user.setUsername("admin");
+//        user.setPassword(passwordEncoder.encode("cc"));
+//        user.setEmail("cc@cc.com");
+//        userRepository.save(user);
+//    }
     public void register(UserModel user) {
         user.setRole("user");
         user.setPassword(passwordEncoder.encode(user.getPassword()));

@@ -37,40 +37,40 @@ public class RevormclassApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        UserModel u1 = new UserModel();
-        u1.getEmail();
-
-
-        Vendor v= new Vendor();
-        v.setTitle("Nintendo");
-        vendorManager.addVendor(v);
-//        v.setEmail("ob.gmail");
-//        v.setPassword("fff");
-               Category cat1= new Category(null, "book",null,0);
-        Category cat2= new Category(null, "consol",null,0);
-        Category cat3=    new Category(null, "disque",null,0);
-         List<Category> categories = new ArrayList<>();
-        categories.add(cat1);
-        categories.add(cat2);
-        categories.add(cat3);
-
-      categorymanager.addCategory(cat1);
-        categorymanager.addCategory(cat2);
-        categorymanager.addCategory(cat3);
-
-        Product product = new Product(null, "The Compound Effect", 1223.0, "imageProduct/img.png", cat1,1);
-      product.setVendor(v);
-        Product product1 = new Product(null, "Switch", 1235.0,"imageProduct/img_1.png",cat2,0);
-        product1.setVendor(v);
-        Product product2 = new Product(null, "Mario Odyssey", 1823.0 ,"imageProduct/img_2.png",cat3,3);
-        product2.setVendor(v);
-        productManager.addProduct(product);
-        productManager.addProduct(product1);
-        productManager.addProduct(product2);
-        categories.forEach(cat -> cat.setProductCount(productManager.countByCategory(cat.getTitle())));
-        System.out.println(cat1.getProductCount());
-        System.out.println(cat2.getProductCount());
-        System.out.println(cat3.getProductCount());
+//        UserModel u1 = new UserModel();
+//        u1.getEmail();
+//
+//
+//        Vendor v= new Vendor();
+//        v.setTitle("Nintendo");
+//        vendorManager.addVendor(v);
+////        v.setEmail("ob.gmail");
+////        v.setPassword("fff");
+//               Category cat1= new Category(null, "book",null,0);
+//        Category cat2= new Category(null, "consol",null,0);
+//        Category cat3=    new Category(null, "disque",null,0);
+//         List<Category> categories = new ArrayList<>();
+//        categories.add(cat1);
+//        categories.add(cat2);
+//        categories.add(cat3);
+//
+//      categorymanager.addCategory(cat1);
+//        categorymanager.addCategory(cat2);
+//        categorymanager.addCategory(cat3);
+//
+//        Product product = new Product(null, "The Compound Effect", 1223.0, "imageProduct/img.png", cat1,1);
+//      product.setVendor(v);
+//        Product product1 = new Product(null, "Switch", 1235.0,"imageProduct/img_1.png",cat2,0);
+//        product1.setVendor(v);
+//        Product product2 = new Product(null, "Mario Odyssey", 1823.0 ,"imageProduct/img_2.png",cat3,3);
+//        product2.setVendor(v);
+//        productManager.addProduct(product);
+//        productManager.addProduct(product1);
+//        productManager.addProduct(product2);
+//        categories.forEach(cat -> cat.setProductCount(productManager.countByCategory(cat.getTitle())));
+//        System.out.println(cat1.getProductCount());
+//        System.out.println(cat2.getProductCount());
+//        System.out.println(cat3.getProductCount());
 ////        List<Product> products = new ArrayList<>();
 ////        products.add(product1);
 ////        products.add(product2);
