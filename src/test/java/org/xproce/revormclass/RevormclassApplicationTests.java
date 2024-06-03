@@ -8,6 +8,7 @@ class RevormclassApplicationTests {
 
     @Test
     void contextLoads() {
+        assert(true);
     }
 
 }
