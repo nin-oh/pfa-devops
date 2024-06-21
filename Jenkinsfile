@@ -12,7 +12,7 @@ pipeline {
          stage('Checkout') {
              steps {
                 //checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'jenkins', url: 'https://github.com/nin-oh/pfa-devops']])
-                sh 'mvn clean install'
+                bat 'mvn clean install'
              }
          }
 
@@ -20,10 +20,10 @@ pipeline {
              steps {
                  script {
 
-                        sh 'docker login -u "sabersimpx" -p "sabersimp@12"'
+                        bat 'docker login -u "sabersimpx" -p "sabersimp@12"'
                          // Build and push the image using Docker Compose
-                         sh 'docker build -t sabersimpx/revormclass:mid .'
-                       sh 'docker push sabersimpx/revormclass:mid'
+                         bat 'docker build -t sabersimpx/revormclass:mid .'
+                       bat 'docker push sabersimpx/revormclass:mid'
 
               }
           }
