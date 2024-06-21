@@ -11,7 +11,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
-               checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'jenkins', url: 'https://github.com/nin-oh/pfa-devops']])
+               //checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'jenkins', url: 'https://github.com/nin-oh/pfa-devops']])
                sh 'mvn clean install'
             }
         }
