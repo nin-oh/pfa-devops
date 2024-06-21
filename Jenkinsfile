@@ -22,8 +22,8 @@ pipeline {
 
                         sh 'docker login -u "sabersimpx" -p "sabersimp@12"'
                          // Build and push the image using Docker Compose
-                         sh 'docker-compose build'
-                       sh 'docker-compose push'
+                         sh 'docker build -t sabersimpx/revormclass:mid .'
+                       sh 'docker push sabersimpx/revormclass:mid'
 
               }
           }
