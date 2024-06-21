@@ -4,7 +4,10 @@ pipeline {
         maven 'Maven' // Maven tool installation defined in Jenkins configuration
      }
 
-
+    environment {
+        JAVA_HOME = 'C:\\Program Files\\Java\\jdk-21' // Set this to the path of your JDK installation
+        PATH = "${env.PATH};${env.JAVA_HOME}\\bin"
+    }
 
     stages {
 
