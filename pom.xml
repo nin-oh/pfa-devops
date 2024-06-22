@@ -10,7 +10,7 @@
     </parent>
     <groupId>org.xproce</groupId>
     <artifactId>revormclass</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.10-SNAPSHOT</version>
     <name>revormclass</name>
     <description>revormclass</description>
     <properties>
