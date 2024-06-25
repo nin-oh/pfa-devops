@@ -5,7 +5,7 @@ When you're ready, start your application by running:
 new :)
 Your application will be available at http://localhost:8090.
 
-### Deployiiing your application to the cloud
+### Deploying your application to the cloud
 
 First, build your image, e.g.: `docker build -t myapp .`.
 If your cloud uses a different CPU architecture than your development
